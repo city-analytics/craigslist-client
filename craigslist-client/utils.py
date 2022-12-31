@@ -13,11 +13,3 @@ def build_primary_urls(search_query: str, category: str, cities: [str], filters:
         url = url_template.format(city=city, category=category, filters=filters)
         urls.append(url)
     return urls
-
-if __name__ == "__main__":
-    search_query = "condo"
-    filters = ['postedToday=1']
-    cities = ["vancouver", "toronto"]
-    category = "apa"
-    urls = build_primary_urls(search_query, category, cities, filters)
-    print(urls)

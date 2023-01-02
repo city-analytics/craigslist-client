@@ -1,8 +1,8 @@
 import requests
 from datetime import datetime
 from bs4 import BeautifulSoup
-from models.search_result import SearchResult
-from models.listing import Listing
+from craigslistclient.models.search_result import SearchResult
+from craigslistclient.models.listing import Listing
 
 
 class Craigslist:

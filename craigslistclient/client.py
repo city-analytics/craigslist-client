@@ -1,3 +1,4 @@
+import re
 import requests
 from datetime import datetime
 from bs4 import BeautifulSoup
@@ -24,17 +25,21 @@ class Craigslist:
             badges=self.__get_badges(soup)
         )
 
+    def __get_id(self, url: str) -> str:
+        id_ = re.search("\\d+", url)
+        return id_.group()
+
     def __get_title(self, soup: BeautifulSoup) -> str:
         title_span = soup.find("span", {"id": "titletextonly"})
-        return title_span.text
+        return None if title_span is None else title_span.text
 
     def __get_price(self, soup: BeautifulSoup) -> str:
         price_span = soup.find("span", {"class": "price"})
-        return price_span.text
+        return None if price_span is None else price_span.text
 
     def __get_date_posted(self, soup: BeautifulSoup) -> datetime:
         date_dom = soup.find("time", {"class": "date timeago"})
-        return datetime.strptime(date_dom["datetime"], "%Y-%m-%dT%H:%M:%S%z")
+        return None if date_dom is None else datetime.strptime(date_dom["datetime"], "%Y-%m-%dT%H:%M:%S%z")
 
     def __get_badges(self, soup: BeautifulSoup) -> [str]:
         span_elements = soup.select("span")
@@ -60,11 +65,11 @@ class Craigslist:
 
     def __get_map_coordinates(self, soup: BeautifulSoup) -> [str]:
         map_div = soup.find("div", {"id": "map"})
-        return [map_div["data-latitude"], map_div["data-longitude"]]
+        return None if map_div is None else [map_div["data-latitude"], map_div["data-longitude"]]
 
     def __get_description(self, soup: BeautifulSoup) -> [str]:
         description = soup.find(id='postingbody')
-        return description.text.strip('QR Code Link to This Post')
+        return None if description else description.text.strip('QR Code Link to This Post')
 
     def __get_results_urls(self, soup: BeautifulSoup) -> [str]:
         raw_rows = soup.find_all(class_='result-row')

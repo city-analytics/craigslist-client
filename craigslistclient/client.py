@@ -16,6 +16,8 @@ class Craigslist:
         response = requests.get(url)
         soup = BeautifulSoup(response.content, 'html.parser')
         return Listing(
+            id=self.__get_id(url),
+            listing_url=url,
             title=self.__get_title(soup),
             price=self.__get_price(soup),
             date_posted=self.__get_date_posted(soup),

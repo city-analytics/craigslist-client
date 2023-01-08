@@ -2,8 +2,9 @@ from datetime import datetime
 
 
 class Listing:
-    def __init__(self, id: str, title: str, price: str, date_posted: datetime, thumbnail_urls: [str], description: str, map_coordinates: [str], badges: [str]):
+    def __init__(self, id: str, listing_url: str, title: str, price: str, date_posted: datetime, thumbnail_urls: [str], description: str, map_coordinates: [str], badges: [str]):
         self.id = id
+        self.listing_url = listing_url
         self.title = title
         self.price = price
         self.date_posted = date_posted
@@ -15,6 +16,10 @@ class Listing:
     @property
     def get_id(self) -> str:
         return self.id
+
+    @property
+    def get_listing_url(self) -> str:
+        return self.listing_url
 
     @property
     def get_title(self) -> str:
@@ -39,6 +44,7 @@ class Listing:
     def to_dict(self) -> dict:
         return {
             "id": self.id,
+            "listing_url": self.listing_url,
             "title": self.title,
             "price": self.price,
             "date_posted": self.date_posted,

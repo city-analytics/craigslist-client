@@ -42,11 +42,9 @@ class Listing:
             "title": self.title,
             "price": self.price,
             "date_posted": self.date_posted,
-            "thumbnail_urls": str(self.thumbnail_urls),
-            "badges": str(self.badges),
+            "thumbnail_urls": self.thumbnail_urls,
+            "badges": self.badges,
             "description": self.description,
-            "map_coordinates": str(self.map_coordinates)
+            "map_coordinates": self.map_coordinates
         }
 
-    def __str__(self):
-        return str(self.to_map())

@@ -31,13 +31,16 @@ class Listing:
     def get_badges(self) -> [str]:
         return self.badges
 
-    def __str__(self):
-        return str({
+    def to_dict(self) -> dict:
+        return {
             "title": self.title,
             "price": self.price,
-            "date_posted": str(self.date_posted),
+            "date_posted": self.date_posted,
             "thumbnail_urls": str(self.thumbnail_urls),
             "badges": str(self.badges),
             "description": self.description,
             "map_coordinates": str(self.map_coordinates)
-        })
+        }
+
+    def __str__(self):
+        return str(self.to_map())

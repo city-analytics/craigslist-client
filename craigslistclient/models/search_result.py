@@ -1,10 +1,10 @@
 class SearchResult:
-    def __init__(self, results: [str]):
-        self.results = results
+    def __init__(self, listings: set):
+        self.listings = listings
 
     @property
-    def get_results(self):
-        return self.results
+    def get_listings(self):
+        return self.listings
 
     def __str__(self):
-        return str(self.results)
+        return str(self.listings)

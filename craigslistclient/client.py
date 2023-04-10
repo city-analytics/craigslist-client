@@ -1,5 +1,7 @@
+import math
 import re
 import requests
+from requests_html import HTMLSession, HTML
 from datetime import datetime
 from bs4 import BeautifulSoup
 from craigslistclient.models.search_result import SearchResult
@@ -7,10 +9,28 @@ from craigslistclient.models.listing import Listing
 
 
 class Craigslist:
+    def __init__(self):
+        self.session = HTMLSession()
+
     def get_search_results(self, url: str) -> SearchResult:
-        response = requests.get(url)
-        soup = BeautifulSoup(response.content, 'html.parser')
-        return SearchResult(results=self.__get_results_urls(soup))
+        headers = {
+            'Host': 'vancouver.craigslist.org',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/111.0',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.7,fa;q=0.3',
+        }
+
+        initial_response = self.session.get(url, headers=headers)
+        initial_response.html.render(timeout=10, sleep=10)
+        pagination_urls = self.__generate_pagination_urls(initial_response.html)
+
+        listing_urls = set()
+        for pagination_url in pagination_urls:
+            response = self.session.get(pagination_url, headers=headers)
+            response.html.render(timeout=10, sleep=10)
+            listing_urls.update(self.__get_listing_urls(response.html))
+
+        return SearchResult(results=listing_urls)
 
     def get_listing_details(self, url: str) -> Listing:
         response = requests.get(url)
@@ -77,7 +97,27 @@ class Craigslist:
             else:
                 return description.text.strip('QR Code Link to This Post')
 
-    def __get_results_urls(self, soup: BeautifulSoup) -> [str]:
-        raw_rows = soup.find_all(class_='result-row')
-        ad_link_raw = [item.find('a') for item in raw_rows]
-        return [items.get('href') for items in ad_link_raw]
+
+    def __get_listing_urls(self, html: HTML) -> [str]:
+        regex_pattern = r"^.*/d/"
+        return [url for url in html.absolute_links if re.match(regex_pattern, url)]
+
+
+    def __generate_pagination_urls(self, html: HTML) -> [str]:
+        pagination_str = html.xpath('//span[@class="cl-page-number"]')[0]
+        pagination_list = pagination_str.full_text.split(" ")  # Sample list ['1', '-', '120', 'of', '7,877']
+        listings_per_page = int(pagination_list[2].replace(",", ""))
+        number_of_listings = int(pagination_list[4].replace(",", ""))
+        total_pages = math.ceil(number_of_listings / listings_per_page)
+        urls = []
+        for i in range(total_pages):
+            url = "{base_url}#search=1~list~{page}~0".format(base_url=html.url, page=i)
+            urls.append(url)
+        return urls
+
+
+if __name__ == "__main__":
+    client = Craigslist()
+    url = "https://vancouver.craigslist.org/search/apa"
+    client.get_search_results(url)
+

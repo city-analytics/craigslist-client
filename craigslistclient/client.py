@@ -21,13 +21,13 @@ class Craigslist:
         }
 
         initial_response = self.session.get(url, headers=headers)
-        initial_response.html.render(timeout=10, sleep=10)
+        initial_response.html.render(timeout=10, sleep=3)
         pagination_urls = self.__generate_pagination_urls(initial_response.html)
 
         listing_urls = set()
         for pagination_url in pagination_urls:
             response = self.session.get(pagination_url, headers=headers)
-            response.html.render(timeout=10, sleep=10)
+            response.html.render(timeout=10, sleep=3)
             listing_urls.update(self.__get_listing_urls(response.html))
 
         return SearchResult(results=listing_urls)

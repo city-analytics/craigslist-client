@@ -1,5 +1,7 @@
 import math
 import re
+import time
+
 import requests
 from requests_html import HTMLSession, HTML
 from datetime import datetime
@@ -30,7 +32,7 @@ class Craigslist:
             response.html.render(timeout=10, sleep=3)
             listing_urls.update(self.__get_listing_urls(response.html))
 
-        return SearchResult(results=listing_urls)
+        return SearchResult(listing_urls=listing_urls)
 
     def get_listing_details(self, url: str) -> Listing:
         response = requests.get(url)
@@ -104,20 +106,26 @@ class Craigslist:
 
 
     def __generate_pagination_urls(self, html: HTML) -> [str]:
-        pagination_str = html.xpath('//span[@class="cl-page-number"]')[0]
-        pagination_list = pagination_str.full_text.split(" ")  # Sample list ['1', '-', '120', 'of', '7,877']
-        listings_per_page = int(pagination_list[2].replace(",", ""))
-        number_of_listings = int(pagination_list[4].replace(",", ""))
-        total_pages = math.ceil(number_of_listings / listings_per_page)
         urls = []
-        for i in range(total_pages):
-            url = "{base_url}#search=1~list~{page}~0".format(base_url=html.url, page=i)
-            urls.append(url)
+        try:
+            pagination_str = html.xpath('//span[@class="cl-page-number"]')[0]
+            pagination_list = pagination_str.full_text.split(" ")  # Sample list ['1', '-', '120', 'of', '7,877']
+            listings_per_page = int(pagination_list[2].replace(",", ""))
+            number_of_listings = int(pagination_list[4].replace(",", ""))
+            total_pages = math.ceil(number_of_listings / listings_per_page)
+            for i in range(total_pages):
+                url = "{base_url}#search=1~list~{page}~0".format(base_url=html.url, page=i)
+                urls.append(url)
+        except Exception as e:
+            print("Error: " + e)
         return urls
 
 
 if __name__ == "__main__":
     client = Craigslist()
-    url = "https://vancouver.craigslist.org/search/apa"
-    client.get_search_results(url)
-
+    url = "https://vancouver.craigslist.org/search/apa?postedToday=1"
+    result = client.get_search_results(url)
+    for listing_url in result.get_listing_urls:
+        time.sleep(1)  # Be kind to Craigslist servers
+        details = client.get_listing_details(listing_url)
+        print(details.to_dict())

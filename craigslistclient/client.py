@@ -50,16 +50,19 @@ class Craigslist:
         )
 
     def __get_id(self, url: str) -> str:
-        id_ = re.search("\\d+", url)
-        return id_.group()
+        id_ = re.findall("\\d+", url)
+        return id_[-1]
 
     def __get_title(self, soup: BeautifulSoup) -> str:
         title_span = soup.find("span", {"id": "titletextonly"})
         return None if title_span is None else title_span.text
 
-    def __get_price(self, soup: BeautifulSoup) -> str:
+    def __get_price(self, soup: BeautifulSoup) -> int:
         price_span = soup.find("span", {"class": "price"})
-        return None if price_span is None else price_span.text
+        if price_span:
+            price_int = int(re.sub("[^0-9]", "", price_span.text))
+            return price_int
+        return None
 
     def __get_date_posted(self, soup: BeautifulSoup) -> datetime:
         date_dom = soup.find("time", {"class": "date timeago"})

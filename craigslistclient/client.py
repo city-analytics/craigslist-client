@@ -97,10 +97,10 @@ class Craigslist:
     def __get_description(self, soup: BeautifulSoup) -> [str]:
         description = soup.find(id='postingbody')
         if description:
-            if description.text:
+            if not description.text:
                 return None
             else:
-                return description.text.strip('QR Code Link to This Post')
+                return description.text.strip('\n\nQR Code Link to This Post\n\n\n')
 
 
     def __get_listing_urls(self, html: HTML) -> [str]:

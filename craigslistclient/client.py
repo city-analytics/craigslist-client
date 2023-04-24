@@ -12,7 +12,10 @@ from craigslistclient.models.listing import Listing
 
 class Craigslist:
     def __init__(self):
-        self.session = HTMLSession()
+        self.session = HTMLSession(browser_args=['--single-process',
+                                                 '--disable-dev-shm-usage',
+                                                 '--disable-gpu',
+                                                 '--no-zygote'])
 
     def get_search_results(self, url: str) -> SearchResult:
         headers = {

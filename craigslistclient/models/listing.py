@@ -43,7 +43,7 @@ class Listing:
 
     def to_dict(self) -> dict:
         return {
-            "id": self.id,
+            "_id": self.id,
             "listing_url": self.listing_url,
             "title": self.title,
             "price": self.price,

@@ -12,6 +12,10 @@ setup(
     url='https://github.com/city-analytics/craigslist-client',
     packages=find_packages(),
     python_requires='>=3.6, <4',
-    install_requires=['beautifulsoup4', 'requests', 'requests-html'],
+    install_requires=[
+        'beautifulsoup4',
+        'requests',
+        'requests-html @ git+https://github.com/city-analytics/requests-html.git'
+    ],
     include_package_data=True
 )

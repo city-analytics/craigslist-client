@@ -11,8 +11,9 @@ from craigslistclient.models.listing import Listing
 
 
 class Craigslist:
-    def __init__(self):
-        self.session = HTMLSession(browser_args=['--single-process',
+    def __init__(self, chromium_executable_path: str):
+        self.session = HTMLSession(options={'executablePath': chromium_executable_path},
+                                   browser_args=['--single-process',
                                                  '--disable-dev-shm-usage',
                                                  '--disable-gpu',
                                                  '--no-zygote'])
@@ -128,7 +129,7 @@ class Craigslist:
 
 
 if __name__ == "__main__":
-    client = Craigslist()
+    client = Craigslist(chromium_executable_path='/Users/eric/Downloads/headless-chromium')
     url = "https://vancouver.craigslist.org/search/apa?postedToday=1"
     result = client.get_search_results(url)
     for listing_url in result.get_listing_urls:

@@ -11,7 +11,7 @@ from craigslistclient.models.listing import Listing
 
 
 class Craigslist:
-    def __init__(self, chromium_executable_path: str):
+    def __init__(self):
         self.session = HTMLSession()
 
     def get_search_results(self, url: str) -> SearchResult:

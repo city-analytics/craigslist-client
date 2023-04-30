@@ -5,7 +5,7 @@ cwd = pathlib.Path(__file__).parent.resolve()
 long_description = (cwd / 'README.md').read_text(encoding='utf-8')
 setup(
     name='craigslistclient',
-    version='1.3.3',
+    version='1.3.4',
     description='Client for Craigslist listings',
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -15,7 +15,7 @@ setup(
     install_requires=[
         'beautifulsoup4',
         'requests',
-        'requests-html @ git+https://github.com/city-analytics/requests-html.git'
+        'requests-html'
     ],
     include_package_data=True
 )

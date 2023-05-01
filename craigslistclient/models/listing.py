@@ -2,7 +2,7 @@ from datetime import datetime
 
 
 class Listing:
-    def __init__(self, id: str, listing_url: str, title: str, price: str, date_posted: datetime, thumbnail_urls: [str], description: str, map_coordinates: [str], badges: [str]):
+    def __init__(self, id: str, listing_url: str, title: str, price: str, date_posted: datetime, thumbnail_urls: [str], description: str, map_coordinates: [float], badges: [str]):
         self.id = id
         self.listing_url = listing_url
         self.title = title
@@ -34,7 +34,7 @@ class Listing:
         return self.description
 
     @property
-    def get_map_coordinates(self) -> [str]:
+    def get_map_coordinates(self) -> [float]:
         return self.map_coordinates
 
     @property
@@ -51,6 +51,9 @@ class Listing:
             "thumbnail_urls": self.thumbnail_urls,
             "badges": self.badges,
             "description": self.description,
-            "map_coordinates": self.map_coordinates
+            "location": {
+                "type": "Point",
+                "coordinates": self.map_coordinates
+            }
         }
 

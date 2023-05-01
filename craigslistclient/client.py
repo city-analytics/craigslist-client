@@ -92,7 +92,7 @@ class Craigslist:
 
     def __get_map_coordinates(self, soup: BeautifulSoup) -> [str]:
         map_div = soup.find("div", {"id": "map"})
-        return None if map_div is None else [map_div["data-latitude"], map_div["data-longitude"]]
+        return None if map_div is None else [float(map_div["data-longitude"]), float(map_div["data-latitude"])]
 
     def __get_description(self, soup: BeautifulSoup) -> [str]:
         description = soup.find(id='postingbody')
